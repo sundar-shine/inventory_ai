@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QuickSupply Co — Supplier Operations Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg:#050f07;--s1:#080f08;--s2:#0b160c;
+  --border:#112211;--border2:#183018;
+  --green:#059669;--green2:#10b981;--green3:#34d399;
+  --teal:#0891b2;--amber:#d97706;--red:#dc2626;
+  --text:#d1fae5;--muted:#2d6a42;--white:#f0fdf4;
+}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;}
+
+nav{
+  background:rgba(5,15,7,0.97);border-bottom:1px solid var(--border2);
+  height:60px;display:flex;align-items:center;padding:0 32px;justify-content:space-between;
+  position:sticky;top:0;z-index:50;backdrop-filter:blur(16px);
+}
+.nav-brand{display:flex;align-items:center;gap:12px;}
+.brand-mark{width:38px;height:38px;border-radius:8px;background:linear-gradient(135deg,#059669,#10b981);display:flex;align-items:center;justify-content:center;font-size:20px;}
+.brand-name{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--white);}
+.brand-sub{font-size:10px;color:var(--muted);letter-spacing:0.12em;text-transform:uppercase;margin-top:-2px;}
+.nav-right{display:flex;align-items:center;gap:16px;}
+.nav-pill{display:flex;align-items:center;gap:6px;padding:5px 14px;border-radius:20px;font-size:11px;font-weight:500;}
+.pill-live{background:rgba(5,150,105,0.1);border:1px solid rgba(16,185,129,0.25);color:var(--green2);}
+.nav-clock{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--muted);}
+.dot-pulse{width:5px;height:5px;border-radius:50%;background:var(--green2);animation:dp 1.5s infinite;}
+@keyframes dp{0%,100%{opacity:1;}50%{opacity:0.2;}}
+.back-btn{padding:6px 16px;border-radius:6px;background:rgba(8,145,178,0.1);border:1px solid rgba(8,145,178,0.25);color:#67e8f9;font-size:12px;font-weight:600;cursor:pointer;transition:all 0.2s;letter-spacing:0.03em;}
+.back-btn:hover{background:rgba(8,145,178,0.2);}
+
+main{max-width:1280px;margin:0 auto;padding:28px 32px;}
+
+/* ALERT BANNER */
+.alert-banner{
+  background:linear-gradient(135deg,rgba(5,150,105,0.08),rgba(16,185,129,0.04));
+  border:1px solid rgba(16,185,129,0.2);border-radius:12px;
+  padding:14px 20px;margin-bottom:24px;
+  display:flex;align-items:center;gap:14px;
+}
+.alert-orb{width:42px;height:42px;border-radius:50%;border:2px solid var(--green2);background:rgba(16,185,129,0.08);display:flex;align-items:center;justify-content:center;font-size:20px;animation:orb 3s ease infinite;flex-shrink:0;}
+@keyframes orb{0%,100%{box-shadow:0 0 0 0 rgba(16,185,129,0.4);}50%{box-shadow:0 0 0 12px rgba(16,185,129,0);}}
+.alert-label{font-size:13px;font-weight:600;color:var(--green3);}
+.alert-desc{font-size:11px;color:var(--muted);margin-top:2px;}
+.alert-tag{margin-left:auto;padding:4px 12px;border-radius:8px;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.2);color:var(--green2);font-size:10px;font-weight:600;font-family:'JetBrains Mono',monospace;}
+
+/* KPI */
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;}
+.kpi{background:var(--s1);border:1px solid var(--border2);border-radius:12px;padding:20px 22px;position:relative;overflow:hidden;}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent,var(--green));opacity:0.6;}
+.kpi-label{font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);font-weight:500;}
+.kpi-value{font-family:'Playfair Display',serif;font-size:36px;font-weight:700;margin:8px 0 4px;line-height:1;}
+.kpi-note{font-size:11px;color:var(--muted);}
+.kpi-icon{position:absolute;right:18px;top:18px;font-size:26px;opacity:0.15;}
+
+/* GRID */
+.grid2{display:grid;grid-template-columns:1.5fr 1fr;gap:20px;margin-bottom:20px;}
+
+/* PANEL */
+.panel{background:var(--s1);border:1px solid var(--border2);border-radius:12px;overflow:hidden;}
+.ph{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.ph-title{font-size:12px;font-weight:600;color:var(--white);letter-spacing:0.04em;}
+.tag{font-size:9px;padding:2px 8px;border-radius:6px;font-family:'JetBrains Mono',monospace;font-weight:500;letter-spacing:0.04em;}
+.tag-green{background:rgba(5,150,105,0.1);color:var(--green2);border:1px solid rgba(16,185,129,0.2);}
+.tag-teal{background:rgba(8,145,178,0.1);color:#67e8f9;border:1px solid rgba(8,145,178,0.2);}
+.tag-amber{background:rgba(217,119,6,0.1);color:#fbbf24;border:1px solid rgba(217,119,6,0.2);}
+
+/* INCOMING ORDERS */
+.in-wrap{overflow-y:auto;max-height:380px;}
+.in-wrap::-webkit-scrollbar{width:3px;}
+.in-wrap::-webkit-scrollbar-thumb{background:var(--border2);}
+.empty{padding:36px;text-align:center;color:var(--muted);font-size:12px;}
+.empty-ico{font-size:28px;margin-bottom:8px;opacity:0.25;}
+
+.in-row{
+  padding:15px 20px;border-bottom:1px solid var(--border);
+  animation:iIn 0.5s cubic-bezier(0.34,1.56,0.64,1);transition:background 0.15s;
+}
+@keyframes iIn{from{opacity:0;transform:translateX(14px) scale(0.97);}to{opacity:1;transform:translateX(0) scale(1);}}
+.in-row:hover{background:rgba(16,185,129,0.03);}
+.in-top{display:flex;align-items:center;gap:12px;margin-bottom:10px;}
+.in-ico{width:40px;height:40px;border-radius:10px;background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.15);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.in-title{flex:1;}
+.in-id{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--green2);}
+.in-name{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--white);}
+.in-from{font-size:10px;color:var(--muted);}
+.in-qty{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--green3);text-align:right;}
+.in-unit{font-size:9px;color:var(--muted);}
+.in-bottom{display:flex;align-items:center;gap:8px;}
+.confirmed-tag{padding:4px 12px;border-radius:6px;background:rgba(5,150,105,0.12);border:1px solid rgba(16,185,129,0.2);color:var(--green2);font-size:10px;font-weight:600;font-family:'JetBrains Mono',monospace;}
+.delivery-tag{padding:4px 10px;border-radius:6px;background:rgba(8,145,178,0.08);border:1px solid rgba(8,145,178,0.15);color:#67e8f9;font-size:10px;font-weight:500;}
+.val-tag{padding:4px 10px;border-radius:6px;background:rgba(217,119,6,0.08);border:1px solid rgba(217,119,6,0.15);color:#fbbf24;font-size:10px;font-weight:600;font-family:'JetBrains Mono',monospace;}
+
+/* INV TABLE */
+.inv-wrap{overflow-y:auto;max-height:380px;}
+.inv-wrap::-webkit-scrollbar{width:3px;}
+.inv-wrap::-webkit-scrollbar-thumb{background:var(--border2);}
+.i-row{display:grid;grid-template-columns:1fr 70px 70px;padding:10px 20px;border-bottom:1px solid var(--border);align-items:center;}
+.i-row.ih{background:var(--s2);font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;}
+.i-name{font-size:12px;font-weight:500;color:var(--white);}
+.i-cat{font-size:9px;color:var(--muted);}
+.i-stock{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--green3);text-align:center;}
+.i-price{font-family:'JetBrains Mono',monospace;font-size:11px;color:#fbbf24;text-align:center;}
+
+/* ACT */
+.act-wrap{overflow-y:auto;max-height:130px;padding:6px 0;}
+.act-wrap::-webkit-scrollbar{width:3px;}
+.act-row{padding:7px 20px;display:flex;gap:10px;border-bottom:1px solid rgba(17,34,17,0.6);animation:fadeIn 0.3s ease;}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+.act-dot{width:5px;height:5px;border-radius:50%;margin-top:7px;flex-shrink:0;}
+.act-text{font-size:11px;color:var(--muted);line-height:1.45;}
+.act-time{font-family:'JetBrains Mono',monospace;font-size:9px;color:#1a3320;margin-top:2px;}
+
+/* TOAST */
+.toast-wrap{position:fixed;bottom:24px;left:24px;z-index:300;display:flex;flex-direction:column;gap:8px;}
+.toast{background:var(--s2);border:1px solid var(--border2);border-left:3px solid var(--green);border-radius:10px;padding:11px 16px;min-width:260px;animation:tIn 0.4s cubic-bezier(0.34,1.56,0.64,1);box-shadow:0 8px 28px rgba(0,0,0,0.4);}
+@keyframes tIn{from{opacity:0;transform:translateX(-40px);}to{opacity:1;transform:translateX(0);}}
+.toast-t{font-size:11px;font-weight:600;color:var(--green2);margin-bottom:2px;}
+.toast-m{font-size:10px;color:var(--muted);}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand">
+    <div class="brand-mark">🏭</div>
+    <div>
+      <div class="brand-name">QuickSupply Co</div>
+      <div class="brand-sub">Supplier Portal · Chennai Central Warehouse</div>
+    </div>
+  </div>
+  <div class="nav-right">
+    <div class="nav-pill pill-live"><div class="dot-pulse"></div>Accepting Orders</div>
+    <button class="back-btn" onclick="window.location.href='freshmart_dashboard.html'">← FreshMart</button>
+    <div class="nav-clock" id="clock">--:--:--</div>
+  </div>
+</nav>
+
+<main>
+  <!-- Alert banner -->
+  <div class="alert-banner">
+    <div class="alert-orb">📨</div>
+    <div>
+      <div class="alert-label">FreshMart AI Agent — Live Order Channel</div>
+      <div class="alert-desc" id="channel-status">Listening for incoming orders from FreshMart Inventory Optimizer...</div>
+    </div>
+    <div class="alert-tag">CHANNEL OPEN</div>
+  </div>
+
+  <!-- KPI -->
+  <div class="kpi-row">
+    <div class="kpi" style="--accent:#10b981">
+      <div class="kpi-icon">📨</div>
+      <div class="kpi-label">Orders Received</div>
+      <div class="kpi-value" id="k-received" style="color:#34d399">0</div>
+      <div class="kpi-note">From FreshMart AI</div>
+    </div>
+    <div class="kpi" style="--accent:#059669">
+      <div class="kpi-icon">✅</div>
+      <div class="kpi-label">Confirmed</div>
+      <div class="kpi-value" id="k-confirmed" style="color:#10b981">0</div>
+      <div class="kpi-note">Auto-processed</div>
+    </div>
+    <div class="kpi" style="--accent:#d97706">
+      <div class="kpi-icon">🚛</div>
+      <div class="kpi-label">In Transit</div>
+      <div class="kpi-value" id="k-transit" style="color:#fbbf24">0</div>
+      <div class="kpi-note">2-3 business days</div>
+    </div>
+    <div class="kpi" style="--accent:#0891b2">
+      <div class="kpi-icon">📦</div>
+      <div class="kpi-label">Products Available</div>
+      <div class="kpi-value" style="color:#67e8f9">8</div>
+      <div class="kpi-note">All stocked</div>
+    </div>
+  </div>
+
+  <!-- Grid -->
+  <div class="grid2">
+    <!-- Incoming Orders -->
+    <div class="panel">
+      <div class="ph">
+        <div class="ph-title">📨 Incoming Orders from FreshMart</div>
+        <span class="tag tag-green">LIVE FEED</span>
+      </div>
+      <div class="in-wrap" id="in-list">
+        <div class="empty"><div class="empty-ico">🏭</div>Waiting for orders from FreshMart AI Agent...</div>
+      </div>
+    </div>
+
+    <!-- Our Inventory -->
+    <div class="panel">
+      <div class="ph">
+        <div class="ph-title">📦 Our Inventory</div>
+        <span class="tag tag-teal">AVAILABLE</span>
+      </div>
+      <div class="inv-wrap">
+        <div class="i-row ih">
+          <div>Product</div><div style="text-align:center">Stock</div><div style="text-align:center">Price</div>
+        </div>
+        <div id="inv-body"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Activity -->
+  <div class="panel">
+    <div class="ph">
+      <div class="ph-title">⚡ Operations Log</div>
+      <span class="tag tag-green">REAL-TIME</span>
+    </div>
+    <div class="act-wrap" id="act-feed">
+      <div class="act-row">
+        <div class="act-dot" style="background:#10b981"></div>
+        <div><div class="act-text">QuickSupply portal ready. Order channel open for FreshMart.</div>
+        <div class="act-time" id="init-t"></div></div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<div class="toast-wrap" id="toasts"></div>
+
+<script>
+const PRODUCTS=[
+  {name:"Lays Classic",cat:"Snacks",stock:5000,price:10},
+  {name:"Basmati Rice 5kg",cat:"Grocery",stock:3000,price:250},
+  {name:"Amul Milk 1L",cat:"Dairy",stock:4000,price:55},
+  {name:"Sunflower Oil 1L",cat:"Grocery",stock:2000,price:120},
+  {name:"Maggi Noodles",cat:"Snacks",stock:6000,price:14},
+  {name:"Coca Cola 2L",cat:"Beverages",stock:3000,price:80},
+  {name:"Britannia Bread",cat:"Bakery",stock:2000,price:40},
+  {name:"Toor Dal 1kg",cat:"Grocery",stock:4000,price:130},
+];
+const EMOJI={
+  "Lays Classic":"🍟","Basmati Rice 5kg":"🍚","Amul Milk 1L":"🥛",
+  "Sunflower Oil 1L":"🫙","Maggi Noodles":"🍜","Coca Cola 2L":"🥤",
+  "Britannia Bread":"🍞","Toor Dal 1kg":"🫘"
+};
+
+let kR=0,kC=0,kT=0;
+const known=new Set();
+
+setInterval(()=>document.getElementById('clock').textContent=new Date().toLocaleTimeString(),1000);
+document.getElementById('clock').textContent=new Date().toLocaleTimeString();
+document.getElementById('init-t').textContent=new Date().toLocaleTimeString();
+
+function renderInv(){
+  document.getElementById('inv-body').innerHTML=PRODUCTS.map(p=>`
+    <div class="i-row">
+      <div><div class="i-name">${p.name}</div><div class="i-cat">${p.cat}</div></div>
+      <div class="i-stock" id="inv-${p.name.replace(/\s/g,'-')}">${p.stock.toLocaleString()}</div>
+      <div class="i-price">₹${p.price}</div>
+    </div>`).join('');
+}
+renderInv();
+
+function addIncoming(order){
+  const list=document.getElementById('in-list');
+  list.querySelector('.empty')?.remove();
+  const e=EMOJI[order.product_name]||'📦';
+  const p=PRODUCTS.find(x=>x.name===order.product_name);
+  const val=((order.quantity||0)*(p?.price||50)).toLocaleString();
+  const d=document.createElement('div');d.className='in-row';
+  d.innerHTML=`
+    <div class="in-top">
+      <div class="in-ico">${e}</div>
+      <div class="in-title">
+        <div class="in-id">${order.sup_order_id||'SUP-XXXX'}</div>
+        <div class="in-name">${order.product_name}</div>
+        <div class="in-from">From: FreshMart Chennai · ${new Date().toLocaleTimeString()}</div>
+      </div>
+      <div><div class="in-qty">${order.quantity}<div class="in-unit">units</div></div></div>
+    </div>
+    <div class="in-bottom">
+      <span class="confirmed-tag">✅ AUTO-CONFIRMED</span>
+      <span class="delivery-tag">🚛 2-3 business days</span>
+      <span class="val-tag">₹${val}</span>
+    </div>`;
+  list.insertBefore(d,list.firstChild);
+  kR++;kC++;kT++;
+  document.getElementById('k-received').textContent=kR;
+  document.getElementById('k-confirmed').textContent=kC;
+  document.getElementById('k-transit').textContent=kT;
+  // Update inventory
+  const prod=PRODUCTS.find(x=>x.name===order.product_name);
+  if(prod){
+    prod.stock=Math.max(0,prod.stock-order.quantity);
+    const el=document.getElementById(`inv-${order.product_name.replace(/\s/g,'-')}`);
+    if(el)el.textContent=prod.stock.toLocaleString();
+  }
+}
+
+function addAct(text,color){
+  const f=document.getElementById('act-feed');
+  const d=document.createElement('div');d.className='act-row';
+  d.innerHTML=`<div class="act-dot" style="background:${color||'#10b981'}"></div>
+    <div><div class="act-text">${text}</div><div class="act-time">${new Date().toLocaleTimeString()}</div></div>`;
+  f.insertBefore(d,f.firstChild);
+  while(f.children.length>25)f.removeChild(f.lastChild);
+}
+
+function showToast(title,msg){
+  const w=document.getElementById('toasts');
+  const t=document.createElement('div');t.className='toast';
+  t.innerHTML=`<div class="toast-t">${title}</div><div class="toast-m">${msg}</div>`;
+  w.appendChild(t);setTimeout(()=>t.remove(),4500);
+}
+
+// SSE
+(function connectSSE(){
+  try{
+    const es=new EventSource('http://127.0.0.1:5003/api/quicksupply/stream');
+    es.onopen=()=>{
+      addAct('Live connection established with FreshMart ERP system.','#10b981');
+      document.getElementById('channel-status').textContent='Live connection active. Receiving orders in real-time from FreshMart AI Agent.';
+    };
+    es.onmessage=e=>{
+      try{
+        const d=JSON.parse(e.data);
+        if(d.type==='order_received'&&!known.has(d.order.sup_order_id)){
+          known.add(d.order.sup_order_id);
+          addIncoming(d.order);
+          addAct(`📨 Order received: ${d.order.product_name} × ${d.order.quantity} from FreshMart`,'#10b981');
+          addAct(`✅ Auto-confirmed. Dispatching in 2-3 business days.`,'#059669');
+          showToast(`📨 New Order from FreshMart!`,`${d.order.product_name} — ${d.order.quantity} units · ✅ Confirmed`);
+        }
+      }catch(err){}
+    };
+    es.onerror=()=>setTimeout(connectSSE,3000);
+  }catch(e){}
+})();
+
+// Poll fallback
+async function poll(){
+  try{
+    const r = await fetch('http://127.0.0.1:5003/api/supplier/orders');
+    const d = await r.json();
+    (d.orders||[]).forEach(o=>{
+      if(!known.has(o.sup_order_id)){
+        known.add(o.sup_order_id);
+        addIncoming(o);
+        addAct(`📨 Order loaded: ${o.product_name} × ${o.quantity}`,'#10b981');
+      }
+    });
+  }catch(e){
+    console.log('Poll error:', e);
+  }
+}
+setInterval(poll, 2000);
+poll();
+setInterval(poll,2000);poll();
+</script>
+</body>
+</html>
